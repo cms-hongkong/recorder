@@ -26,6 +26,8 @@
     .btn-option { font-size: 20px; padding: 12px 20px; min-width: 80px; }
     .btn-grade { background: #718093; }
     .btn-grade:hover { background: #2f3640; }
+    .btn-gold { background: #F1C40F; color: #2C3E50; }
+    .btn-gold:hover { background: #F39C12; color: white; }
 
     /* 遊戲區域版面布局 */
     .game-board { display: flex; justify-content: center; align-items: center; gap: 40px; margin-top: 20px; flex-wrap: wrap; }
@@ -50,6 +52,12 @@
     .practice-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 20px; }
     .hidden { display: none !important; }
     .tip-box { font-size: 14px; color: #7F8C8D; margin-top: 5px; }
+
+    /* 表單與排行榜樣式 */
+    input[type="text"] { font-size: 18px; padding: 10px 15px; border: 2px solid #CBD5E1; border-radius: 8px; width: 80%; max-width: 280px; text-align: center; margin-bottom: 15px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { padding: 10px; border-bottom: 1px solid #E2E8F0; text-align: center; }
+    th { background-color: #F1F5F9; color: #475569; }
   </style>
 </head>
 <body>
@@ -59,11 +67,11 @@
 </header>
 
 <div class="container">
-  <!-- 主選單 -->
+  <!-- 1. 主選單 -->
   <div id="menu-screen">
     <h2>請選擇學習或挑戰模式</h2>
     
-    <div style="margin-bottom: 25px;">
+    <div style="margin-bottom: 20px;">
       <h3>📚 練習模式（點擊學習指法）</h3>
       <button class="btn btn-grade" onclick="startPractice(3)">3 年級</button>
       <button class="btn btn-grade" onclick="startPractice(4)">4 年級</button>
@@ -71,23 +79,26 @@
       <button class="btn btn-grade" onclick="startPractice(6)">6 年級</button>
     </div>
 
-    <div>
+    <div style="margin-bottom: 20px;">
       <h3>🎮 關卡挑戰（限時 60 秒）</h3>
-      <button class="btn" onclick="startLevel(1)">Level 1 (3年級)</button>
+      <button class="btn" onclick="startLevel(1)">Level 1 (3年級: B,A,G,C',D')</button>
       <button class="btn" onclick="startLevel(2)">Level 2 (3-4年級)</button> <br>
       <button class="btn" onclick="startLevel(3)">Level 3 (3-5年級)</button>
       <button class="btn" onclick="startLevel(4)">Level 4 (3-6年級)</button>
     </div>
+
+    <div>
+      <button class="btn btn-gold" onclick="showLeaderboardScreen()">🏆 查看排行榜</button>
+    </div>
   </div>
 
-  <!-- 練習模式區域 -->
+  <!-- 2. 練習模式區域 -->
   <div id="practice-screen" class="hidden">
     <h2 id="practice-title">3 年級指法練習</h2>
     <div class="practice-list" id="practice-notes-list"></div>
     
     <div class="game-board">
       <div class="recorder-container">
-        <!-- 牧童笛 SVG (可互動點擊試按) -->
         <svg class="recorder-svg" viewBox="0 0 100 370" id="practice-svg">
           <defs>
             <linearGradient id="halfGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -96,7 +107,6 @@
             </linearGradient>
           </defs>
           <rect x="35" y="10" width="30" height="350" rx="10" fill="#F8EFBA" stroke="#D63031" stroke-width="2"/>
-          <!-- 孔位 0-7 -->
           <circle id="p-hole-0" class="hole" cx="15" cy="50" r="9" onclick="toggleHole(0, true)"/>
           <text x="12" y="32" font-size="10" fill="#2C3E50">0 (背)</text>
           <circle id="p-hole-1" class="hole" cx="50" cy="50" r="9" onclick="toggleHole(1, true)"/>
@@ -111,13 +121,13 @@
       </div>
     </div>
     <br>
-    <button class="btn" style="background:#7F8C8D;" onclick="backToMenu()">返回主選單</button>
+    <button class="btn" style="background:#7F8C8D;" onclick="showScreen('menu-screen')">返回主選單</button>
   </div>
 
-  <!-- 挑戰模式區域 -->
+  <!-- 3. 挑戰模式區域 -->
   <div id="game-screen" class="hidden">
     <div class="stats-bar">
-      <div>關卡: <span id="current-level">1</span></div>
+      <div>關卡: Level <span id="current-level">1</span></div>
       <div>分數: <span id="score">0</span></div>
       <div>時間: <span id="timer">60</span>s</div>
     </div>
@@ -125,7 +135,6 @@
     <div class="question-prompt" id="question-prompt">題目讀取中...</div>
 
     <div class="game-board">
-      <!-- 遊戲中用到的 SVG 牧童笛 -->
       <div class="recorder-container">
         <svg class="recorder-svg" viewBox="0 0 100 370" id="game-svg">
           <rect x="35" y="10" width="30" height="350" rx="10" fill="#F8EFBA" stroke="#D63031" stroke-width="2"/>
@@ -141,34 +150,58 @@
         </svg>
       </div>
 
-      <!-- 右側答題操作區 -->
       <div id="interaction-area" style="max-width: 320px; flex: 1;">
-        <!-- 題型 A：多選一按鈕 -->
         <div id="type-a-options" class="hidden"></div>
-
-        <!-- 題型 B：反向測試（提交按鈕） -->
         <div id="type-b-controls" class="hidden">
           <p class="tip-box" style="font-size: 16px;">👉 請在左邊笛子上按出正確指法：<br>(點擊笛孔可切換按滿/半孔/放開)</p>
           <button class="btn btn-submit" onclick="submitFingeringAnswer()">提交答案 🚀</button>
         </div>
-
         <div id="feedback-msg" class="feedback-msg"></div>
       </div>
     </div>
 
     <br>
-    <button class="btn" style="background:#7F8C8D; margin-top:20px;" onclick="backToMenu()">放棄並返回</button>
+    <button class="btn" style="background:#7F8C8D; margin-top:20px;" onclick="abandonGame()">放棄並返回</button>
   </div>
+
+  <!-- 4. 結算/輸入名字畫面 -->
+  <div id="game-over-screen" class="hidden">
+    <h2>⏰ 時間到！挑戰完成！</h2>
+    <p style="font-size: 20px;">你獲得了 <span id="final-score" style="color:var(--accent); font-weight:bold; font-size: 28px;">0</span> 分</p>
+    <p>請輸入你的名字以記錄成績：</p>
+    <input type="text" id="player-name" placeholder="請輸入名字或學號" maxlength="12"><br>
+    <button class="btn btn-submit" onclick="saveScore()">儲存成績並看排行榜 🏆</button>
+  </div>
+
+  <!-- 5. 排行榜畫面 -->
+  <div id="leaderboard-screen" class="hidden">
+    <h2>🏆 榮譽排行榜 (Top 20)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>排名</th>
+          <th>姓名</th>
+          <th>挑戰關卡</th>
+          <th>得分</th>
+        </tr>
+      </thead>
+      <tbody id="leaderboard-tbody">
+        <!-- 動態插入數據 -->
+      </tbody>
+    </table>
+    <br>
+    <button class="btn" onclick="showScreen('menu-screen')">返回主選單</button>
+  </div>
+
 </div>
 
 <script>
   // 音名數據資料庫 (0:背, 1-7:正面孔)[cite: 1]
-  // 0 = 放開, 1 = 按滿, 0.5 = 半孔
   const NOTES_DATA = {
-    3: [
+    3: [ // 3年級必考音名，包含 G[cite: 1, 2, 3, 4, 5, 6]
+      { name: "G",  freq: 392.00, holes: [1, 1, 1, 1, 0, 0, 0, 0] },
       { name: "B",  freq: 493.88, holes: [1, 1, 0, 0, 0, 0, 0, 0] },
       { name: "A",  freq: 440.00, holes: [1, 1, 1, 0, 0, 0, 0, 0] },
-      { name: "G",  freq: 392.00, holes: [1, 1, 1, 1, 0, 0, 0, 0] },
       { name: "C'", freq: 523.25, holes: [1, 0, 1, 0, 0, 0, 0, 0] },
       { name: "D'", freq: 587.33, holes: [0, 0, 1, 0, 0, 0, 0, 0] }
     ],
@@ -193,18 +226,27 @@
     ]
   };
 
-  // 全域變數
   let currentPracticeHoles = [0, 0, 0, 0, 0, 0, 0, 0];
   let currentGameUserHoles = [0, 0, 0, 0, 0, 0, 0, 0];
   let currentPool = [];
   let currentQuestion = null;
-  let currentType = 1; // 1: 睇圖猜音名, 2: 睇音名按笛孔
+  let currentType = 1;
+  let currentLevel = 1;
   let score = 0;
   let timeLeft = 60;
   let timerId = null;
   let audioCtx = null;
 
-  // 初始化 Web Audio API 發聲器
+  // 畫面切換輔助函式
+  function showScreen(screenId) {
+    const screens = ['menu-screen', 'practice-screen', 'game-screen', 'game-over-screen', 'leaderboard-screen'];
+    screens.forEach(id => {
+      document.getElementById(id).classList.add('hidden');
+    });
+    document.getElementById(screenId).classList.remove('hidden');
+  }
+
+  // 音效產生器
   function playSynthSound(freq) {
     if (!freq) return;
     try {
@@ -213,7 +255,7 @@
       
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
-      osc.type = 'triangle'; // 類似木管樂器的柔和音色
+      osc.type = 'triangle';
       osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
       
       gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
@@ -223,12 +265,10 @@
       gain.connect(audioCtx.destination);
       osc.start();
       osc.stop(audioCtx.currentTime + 0.6);
-    } catch (e) {
-      console.log("Audio not supported or blocked");
-    }
+    } catch (e) {}
   }
 
-  // 更新 SVG 笛孔顯示狀態
+  // 渲染 SVG 指法圖
   function renderRecorderSVG(prefix, holesArray) {
     holesArray.forEach((status, idx) => {
       const el = document.getElementById(`${prefix}-hole-${idx}`);
@@ -241,8 +281,7 @@
 
   // --- 練習模式 ---
   function startPractice(grade) {
-    document.getElementById('menu-screen').classList.add('hidden');
-    document.getElementById('practice-screen').classList.remove('hidden');
+    showScreen('practice-screen');
     document.getElementById('practice-title').innerText = `${grade} 年級指法練習`;
 
     const notesList = NOTES_DATA[grade];
@@ -261,7 +300,6 @@
       container.appendChild(btn);
     });
 
-    // 預設重置笛孔
     currentPracticeHoles = [0, 0, 0, 0, 0, 0, 0, 0];
     renderRecorderSVG('p', currentPracticeHoles);
   }
@@ -270,7 +308,6 @@
     let targetArr = isPractice ? currentPracticeHoles : currentGameUserHoles;
     let prefix = isPractice ? 'p' : 'g';
 
-    // 切換邏輯：0(開) -> 1(按滿) -> (若為0,6,7號孔則可進入 0.5半孔) -> 0
     if (targetArr[idx] === 0) {
       targetArr[idx] = 1;
     } else if (targetArr[idx] === 1 && [0, 6, 7].includes(idx)) {
@@ -281,7 +318,6 @@
 
     renderRecorderSVG(prefix, targetArr);
 
-    // 練習模式下：如果按出的指法恰好符合資料庫某個音，發聲提示
     if (isPractice) {
       for (let g in NOTES_DATA) {
         let match = NOTES_DATA[g].find(n => n.holes.every((val, i) => val === targetArr[i]));
@@ -295,6 +331,7 @@
 
   // --- 挑戰關卡模式 ---
   function startLevel(lvl) {
+    currentLevel = lvl;
     currentPool = [];
     for (let i = 3; i <= lvl + 2; i++) {
       if (NOTES_DATA[i]) currentPool.push(...NOTES_DATA[i]);
@@ -306,17 +343,14 @@
     document.getElementById('score').innerText = score;
     document.getElementById('timer').innerText = timeLeft;
 
-    document.getElementById('menu-screen').classList.add('hidden');
-    document.getElementById('game-screen').classList.remove('hidden');
+    showScreen('game-screen');
 
     clearInterval(timerId);
     timerId = setInterval(() => {
       timeLeft--;
       document.getElementById('timer').innerText = timeLeft;
       if (timeLeft <= 0) {
-        clearInterval(timerId);
-        alert(`⏰ 時間到！你的最終得分是：${score} 分`);
-        backToMenu();
+        endGame();
       }
     }, 1000);
 
@@ -325,27 +359,21 @@
 
   function nextQuestion() {
     document.getElementById('feedback-msg').innerText = '';
-    
-    // 隨機選題
     currentQuestion = currentPool[Math.floor(Math.random() * currentPool.length)];
-    // 隨機題型：1 = 看圖猜音名 (60%), 2 = 看音名按笛孔 (40%)
-    currentType = Math.random() < 0.6 ? 1 : 2;
+    currentType = Math.random() < 0.6 ? 1 : 2; // 60% 睇圖猜音名, 40% 睇音名按笛孔
 
     const promptEl = document.getElementById('question-prompt');
     const typeAOpt = document.getElementById('type-a-options');
     const typeBCtl = document.getElementById('type-b-controls');
 
     if (currentType === 1) {
-      // 題型 1：睇圖猜音名
       promptEl.innerText = "❓ 請根據指法，選擇正確的音名：";
       typeAOpt.classList.remove('hidden');
       typeBCtl.classList.add('hidden');
 
-      // 設定笛孔為唯讀並顯示題目指法
       setGameHolesInteractive(false);
       renderRecorderSVG('g', currentQuestion.holes);
 
-      // 生成選項按鈕
       typeAOpt.innerHTML = '';
       let options = [...currentPool].sort(() => 0.5 - Math.random()).slice(0, 4);
       if (!options.some(o => o.name === currentQuestion.name)) options[0] = currentQuestion;
@@ -360,12 +388,10 @@
       });
 
     } else {
-      // 題型 2：睇音名按笛孔 (反向測試)
       promptEl.innerHTML = `🎯 請按出音名 <span style="color:var(--primary); font-size: 32px;">[ ${currentQuestion.name} ]</span> 的指法：`;
       typeAOpt.classList.add('hidden');
       typeBCtl.classList.remove('hidden');
 
-      // 開放笛孔點擊互動，並重置玩家指法
       setGameHolesInteractive(true);
       currentGameUserHoles = [0, 0, 0, 0, 0, 0, 0, 0];
       renderRecorderSVG('g', currentGameUserHoles);
@@ -386,7 +412,6 @@
     }
   }
 
-  // 檢查題型 1 答案
   function checkTypeAAnswer(selectedName) {
     const feedback = document.getElementById('feedback-msg');
     if (selectedName === currentQuestion.name) {
@@ -395,56 +420,101 @@
       feedback.className = "feedback-msg text-correct";
       feedback.innerText = "🎉 答對了！+10 分";
       document.getElementById('score').innerText = score;
-      setTimeout(nextQuestion, 1000);
+      setTimeout(nextQuestion, 800);
     } else {
       timeLeft = Math.max(0, timeLeft - 3);
       feedback.className = "feedback-msg text-wrong";
       feedback.innerText = `❌ 答錯囉！這是 ${currentQuestion.name}（扣 3 秒）`;
       document.getElementById('timer').innerText = timeLeft;
-      setTimeout(nextQuestion, 1500);
+      setTimeout(nextQuestion, 1200);
     }
   }
 
-  // 檢查題型 2 答案（按笛孔對錯）
   function submitFingeringAnswer() {
     const feedback = document.getElementById('feedback-msg');
     const targetHoles = currentQuestion.holes;
     let isCorrect = true;
 
-    // 檢查每一個笛孔
     targetHoles.forEach((status, idx) => {
       const el = document.getElementById(`g-hole-${idx}`);
       if (currentGameUserHoles[idx] !== status) {
         isCorrect = false;
-        el.classList.add('error'); // 高亮按錯的笛孔
+        el.classList.add('error');
       }
     });
 
     if (isCorrect) {
-      score += 20; // 動手按題目給予雙倍高分！
+      score += 20;
       playSynthSound(currentQuestion.freq);
       feedback.className = "feedback-msg text-correct";
       feedback.innerText = "🎉 指法完全正確！+20 分";
       document.getElementById('score').innerText = score;
-      setTimeout(nextQuestion, 1000);
+      setTimeout(nextQuestion, 800);
     } else {
       timeLeft = Math.max(0, timeLeft - 3);
       feedback.className = "feedback-msg text-wrong";
       feedback.innerText = `❌ 指法有誤（紅框處按錯囉，扣 3 秒）`;
       document.getElementById('timer').innerText = timeLeft;
       setTimeout(() => {
-        // 顯示正確解答讓學生學習
         renderRecorderSVG('g', targetHoles);
-        setTimeout(nextQuestion, 2000);
-      }, 1000);
+        setTimeout(nextQuestion, 1500);
+      }, 800);
     }
   }
 
-  function backToMenu() {
+  function abandonGame() {
     clearInterval(timerId);
-    document.getElementById('game-screen').classList.add('hidden');
-    document.getElementById('practice-screen').classList.add('hidden');
-    document.getElementById('menu-screen').classList.remove('hidden');
+    showScreen('menu-screen');
+  }
+
+  // --- 結算與排行榜邏輯 ---
+  function endGame() {
+    clearInterval(timerId);
+    document.getElementById('final-score').innerText = score;
+    document.getElementById('player-name').value = '';
+    showScreen('game-over-screen');
+  }
+
+  function saveScore() {
+    const nameInput = document.getElementById('player-name').value.trim() || '無名大師';
+    const records = JSON.parse(localStorage.getItem('recorder_leaderboard') || '[]');
+    
+    records.push({
+      name: nameInput,
+      level: currentLevel,
+      score: score,
+      date: new Date().toLocaleDateString()
+    });
+
+    // 依分數從高到低排序，只保留前 20 名
+    records.sort((a, b) => b.score - a.score);
+    localStorage.setItem('recorder_leaderboard', JSON.stringify(records.slice(0, 20)));
+
+    showLeaderboardScreen();
+  }
+
+  function showLeaderboardScreen() {
+    showScreen('leaderboard-screen');
+    const records = JSON.parse(localStorage.getItem('recorder_leaderboard') || '[]');
+    const tbody = document.getElementById('leaderboard-tbody');
+    tbody.innerHTML = '';
+
+    if (records.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="color:#94A3B8;">暫無紀錄，快來成為第一個挑戰者吧！</td></tr>';
+      return;
+    }
+
+    records.forEach((rec, idx) => {
+      const tr = document.createElement('tr');
+      let medal = idx === 0 ? '🥇 ' : idx === 1 ? '🥈 ' : idx === 2 ? '🥉 ' : '';
+      tr.innerHTML = `
+        <td>${medal}${idx + 1}</td>
+        <td><strong>${rec.name}</strong></td>
+        <td>Level ${rec.level}</td>
+        <td style="color:var(--primary); font-weight:bold;">${rec.score}</td>
+      `;
+      tbody.appendChild(tr);
+    });
   }
 </script>
 </body>
