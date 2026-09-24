@@ -1,456 +1,451 @@
 <!DOCTYPE html>
 <html lang="zh-HK">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>三角鐵音頻播放器 | Triangle Audio Player</title>
-    <style>
-        /* 基本樣式 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Microsoft JhengHei', 'Arial', sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        
-        .container {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-        }
-        
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 28px;
-        }
-        
-        .subtitle {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 16px;
-        }
-        
-        /* 播放器區域 */
-        .player {
-            margin: 30px 0;
-        }
-        
-        audio {
-            width: 100%;
-            height: 50px;
-            margin: 15px 0;
-            outline: none;
-        }
-        
-        /* 按鈕樣式 */
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 25px 0;
-            flex-wrap: wrap;
-        }
-        
-        .btn {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            min-width: 120px;
-        }
-        
-        .play-btn {
-            background: #4CAF50;
-            color: white;
-        }
-        
-        .play-btn:hover {
-            background: #45a049;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
-        }
-        
-        .pause-btn {
-            background: #ff9800;
-            color: white;
-        }
-        
-        .pause-btn:hover {
-            background: #e68a00;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(255, 152, 0, 0.3);
-        }
-        
-        .stop-btn {
-            background: #f44336;
-            color: white;
-        }
-        
-        .stop-btn:hover {
-            background: #da190b;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.3);
-        }
-        
-        /* 音量控制 */
-        .volume-container {
-            background: #f5f5f5;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-            text-align: left;
-        }
-        
-        .volume-label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            color: #333;
-            font-weight: bold;
-        }
-        
-        .volume-slider {
-            width: 100%;
-            height: 8px;
-            border-radius: 4px;
-            background: #ddd;
-            outline: none;
-            -webkit-appearance: none;
-        }
-        
-        .volume-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: #6a11cb;
-            cursor: pointer;
-            border: 3px solid white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        
-        /* 時間顯示 */
-        .time-display {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-            color: #666;
-            font-size: 14px;
-        }
-        
-        /* 狀態訊息 */
-        .status {
-            margin: 20px 0;
-            padding: 10px;
-            border-radius: 5px;
-            background: #e8f5e8;
-            color: #2e7d32;
-            display: none;
-        }
-        
-        /* 檔案上傳 */
-        .upload-area {
-            border: 3px dashed #ccc;
-            border-radius: 10px;
-            padding: 30px;
-            margin: 25px 0;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .upload-area:hover {
-            border-color: #6a11cb;
-            background: #f9f9ff;
-        }
-        
-        .upload-icon {
-            font-size: 48px;
-            margin-bottom: 10px;
-            color: #6a11cb;
-        }
-        
-        /* 響應式設計 */
-        @media (max-width: 600px) {
-            .container {
-                padding: 20px;
-            }
-            
-            h1 {
-                font-size: 24px;
-            }
-            
-            .btn {
-                min-width: 100px;
-                padding: 10px 20px;
-            }
-            
-            .controls {
-                gap: 10px;
-            }
-        }
-        
-        /* 頁尾 */
-        footer {
-            margin-top: 30px;
-            color: #888;
-            font-size: 14px;
-            border-top: 1px solid #eee;
-            padding-top: 20px;
-        }
-        
-        .emoji {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>牧童笛指法大挑戰 Recorder Master</title>
+  <style>
+    :root {
+      --primary: #4A90E2;
+      --secondary: #50E3C2;
+      --accent: #FF5A5F;
+      --correct: #2ECC71;
+      --wrong: #E74C3C;
+      --bg: #F4F7F9;
+    }
+    * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+    body { background-color: var(--bg); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+    header { background: var(--primary); color: white; width: 100%; text-align: center; padding: 15px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    h1 { margin: 0; font-size: 24px; }
+    
+    .container { max-width: 800px; width: 92%; margin: 20px auto; background: white; padding: 25px; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); text-align: center; }
+    .btn { background: var(--primary); color: white; border: none; padding: 12px 24px; margin: 6px; font-size: 16px; font-weight: bold; border-radius: 10px; cursor: pointer; transition: all 0.2s; box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
+    .btn:hover { background: #357ABD; transform: translateY(-2px); }
+    .btn-submit { background: var(--correct); font-size: 18px; padding: 12px 30px; margin-top: 15px; }
+    .btn-submit:hover { background: #27AE60; }
+    .btn-option { font-size: 20px; padding: 12px 20px; min-width: 80px; }
+    .btn-grade { background: #718093; }
+    .btn-grade:hover { background: #2f3640; }
+
+    /* 遊戲區域版面布局 */
+    .game-board { display: flex; justify-content: center; align-items: center; gap: 40px; margin-top: 20px; flex-wrap: wrap; }
+    .recorder-container { position: relative; display: flex; flex-direction: column; align-items: center; }
+    
+    /* SVG 牧童笛樣式 */
+    .recorder-svg { width: 140px; height: 400px; filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.15)); }
+    .hole { fill: #FFFFFF; stroke: #2C3E50; stroke-width: 3; cursor: pointer; transition: fill 0.15s; }
+    .hole.filled { fill: #00A8FF; }
+    .hole.half { fill: url(#halfGradient); }
+    .hole.error { stroke: var(--wrong); stroke-width: 5; animation: blink 0.5s infinite alternate; }
+    .hole-readonly { cursor: default; }
+
+    @keyframes blink { from { stroke-opacity: 1; } to { stroke-opacity: 0.3; } }
+
+    .stats-bar { display: flex; justify-content: space-around; background: #EAF2F8; padding: 12px; border-radius: 10px; font-size: 18px; font-weight: bold; color: #2C3E50; margin-bottom: 20px; }
+    .question-prompt { font-size: 22px; font-weight: bold; color: #2C3E50; margin: 10px 0; min-height: 32px; }
+    .feedback-msg { font-size: 18px; font-weight: bold; margin-top: 10px; min-height: 28px; }
+    .text-correct { color: var(--correct); }
+    .text-wrong { color: var(--wrong); }
+
+    .practice-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 20px; }
+    .hidden { display: none !important; }
+    .tip-box { font-size: 14px; color: #7F8C8D; margin-top: 5px; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="emoji">🎵</div>
-        <h1>三角鐵音頻播放器</h1>
-        <p class="subtitle">Triangle Audio Player - MP3 播放測試</p>
-        
-        <!-- 狀態訊息 -->
-        <div id="statusMessage" class="status">
-            正在加載音頻檔案...
-        </div>
-        
-        <!-- 播放器 -->
-        <div class="player">
-            <audio id="audioPlayer" controls>
-                <source src="triangle.mp3" type="audio/mpeg">
-                您的瀏覽器不支持音頻播放，請使用 Chrome、Firefox 或 Edge。
-            </audio>
-            
-            <div class="time-display">
-                <span id="currentTime">0:00</span>
-                <span id="totalTime">0:00</span>
-            </div>
-        </div>
-        
-        <!-- 控制按鈕 -->
-        <div class="controls">
-            <button class="btn play-btn" id="playBtn">
-                ▶️ 播放
-            </button>
-            <button class="btn pause-btn" id="pauseBtn">
-                ⏸️ 暫停
-            </button>
-            <button class="btn stop-btn" id="stopBtn">
-                ⏹️ 停止
-            </button>
-        </div>
-        
-        <!-- 音量控制 -->
-        <div class="volume-container">
-            <div class="volume-label">
-                🔊 音量控制
-                <span id="volumeValue">100%</span>
-            </div>
-            <input type="range" 
-                   id="volumeSlider" 
-                   class="volume-slider" 
-                   min="0" 
-                   max="1" 
-                   step="0.01" 
-                   value="1">
-        </div>
-        
-        <!-- 檔案上傳 -->
-        <div class="upload-area" onclick="document.getElementById('fileUpload').click()">
-            <div class="upload-icon">📁</div>
-            <h3>上傳其他音頻檔案</h3>
-            <p>點擊這裡選擇 MP3、WAV、OGG 等格式</p>
-            <input type="file" 
-                   id="fileUpload" 
-                   accept="audio/*" 
-                   style="display: none;">
-        </div>
-        
-        <!-- 頁尾資訊 -->
-        <footer>
-            <p>GitHub Pages 音頻播放器</p>
-            <p>檔案：triangle.mp3 | 使用 Web Audio API</p>
-            <p>如果無法播放，請檢查音頻檔案是否已上傳</p>
-        </footer>
+
+<header>
+  <h1>🎵 牧童笛指法大挑戰</h1>
+</header>
+
+<div class="container">
+  <!-- 主選單 -->
+  <div id="menu-screen">
+    <h2>請選擇學習或挑戰模式</h2>
+    
+    <div style="margin-bottom: 25px;">
+      <h3>📚 練習模式（點擊學習指法）</h3>
+      <button class="btn btn-grade" onclick="startPractice(3)">3 年級</button>
+      <button class="btn btn-grade" onclick="startPractice(4)">4 年級</button>
+      <button class="btn btn-grade" onclick="startPractice(5)">5 年級</button>
+      <button class="btn btn-grade" onclick="startPractice(6)">6 年級</button>
     </div>
 
-    <script>
-        // 獲取所有需要的元素
-        const audio = document.getElementById('audioPlayer');
-        const playBtn = document.getElementById('playBtn');
-        const pauseBtn = document.getElementById('pauseBtn');
-        const stopBtn = document.getElementById('stopBtn');
-        const volumeSlider = document.getElementById('volumeSlider');
-        const volumeValue = document.getElementById('volumeValue');
-        const currentTimeEl = document.getElementById('currentTime');
-        const totalTimeEl = document.getElementById('totalTime');
-        const fileUpload = document.getElementById('fileUpload');
-        const statusMessage = document.getElementById('statusMessage');
-        
-        // 顯示狀態訊息
-        function showStatus(message, type = 'info') {
-            statusMessage.textContent = message;
-            statusMessage.style.display = 'block';
-            
-            if (type === 'error') {
-                statusMessage.style.background = '#ffebee';
-                statusMessage.style.color = '#c62828';
-            } else if (type === 'success') {
-                statusMessage.style.background = '#e8f5e8';
-                statusMessage.style.color = '#2e7d32';
-            }
-            
-            // 3秒後自動隱藏
-            setTimeout(() => {
-                statusMessage.style.display = 'none';
-            }, 3000);
+    <div>
+      <h3>🎮 關卡挑戰（限時 60 秒）</h3>
+      <button class="btn" onclick="startLevel(1)">Level 1 (3年級)</button>
+      <button class="btn" onclick="startLevel(2)">Level 2 (3-4年級)</button> <br>
+      <button class="btn" onclick="startLevel(3)">Level 3 (3-5年級)</button>
+      <button class="btn" onclick="startLevel(4)">Level 4 (3-6年級)</button>
+    </div>
+  </div>
+
+  <!-- 練習模式區域 -->
+  <div id="practice-screen" class="hidden">
+    <h2 id="practice-title">3 年級指法練習</h2>
+    <div class="practice-list" id="practice-notes-list"></div>
+    
+    <div class="game-board">
+      <div class="recorder-container">
+        <!-- 牧童笛 SVG (可互動點擊試按) -->
+        <svg class="recorder-svg" viewBox="0 0 100 370" id="practice-svg">
+          <defs>
+            <linearGradient id="halfGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="50%" stop-color="#00A8FF" />
+              <stop offset="50%" stop-color="#FFFFFF" />
+            </linearGradient>
+          </defs>
+          <rect x="35" y="10" width="30" height="350" rx="10" fill="#F8EFBA" stroke="#D63031" stroke-width="2"/>
+          <!-- 孔位 0-7 -->
+          <circle id="p-hole-0" class="hole" cx="15" cy="50" r="9" onclick="toggleHole(0, true)"/>
+          <text x="12" y="32" font-size="10" fill="#2C3E50">0 (背)</text>
+          <circle id="p-hole-1" class="hole" cx="50" cy="50" r="9" onclick="toggleHole(1, true)"/>
+          <circle id="p-hole-2" class="hole" cx="50" cy="85" r="9" onclick="toggleHole(2, true)"/>
+          <circle id="p-hole-3" class="hole" cx="50" cy="120" r="9" onclick="toggleHole(3, true)"/>
+          <circle id="p-hole-4" class="hole" cx="50" cy="160" r="9" onclick="toggleHole(4, true)"/>
+          <circle id="p-hole-5" class="hole" cx="50" cy="195" r="9" onclick="toggleHole(5, true)"/>
+          <circle id="p-hole-6" class="hole" cx="50" cy="235" r="8" onclick="toggleHole(6, true)"/>
+          <circle id="p-hole-7" class="hole" cx="50" cy="275" r="8" onclick="toggleHole(7, true)"/>
+        </svg>
+        <div class="tip-box">💡 點擊上面音名按鈕觀看指法，或直接點擊笛孔試按！<br>(0, 6, 7號孔點擊可切換：開孔 ➔ 按滿 ➔ 半孔)</div>
+      </div>
+    </div>
+    <br>
+    <button class="btn" style="background:#7F8C8D;" onclick="backToMenu()">返回主選單</button>
+  </div>
+
+  <!-- 挑戰模式區域 -->
+  <div id="game-screen" class="hidden">
+    <div class="stats-bar">
+      <div>關卡: <span id="current-level">1</span></div>
+      <div>分數: <span id="score">0</span></div>
+      <div>時間: <span id="timer">60</span>s</div>
+    </div>
+
+    <div class="question-prompt" id="question-prompt">題目讀取中...</div>
+
+    <div class="game-board">
+      <!-- 遊戲中用到的 SVG 牧童笛 -->
+      <div class="recorder-container">
+        <svg class="recorder-svg" viewBox="0 0 100 370" id="game-svg">
+          <rect x="35" y="10" width="30" height="350" rx="10" fill="#F8EFBA" stroke="#D63031" stroke-width="2"/>
+          <circle id="g-hole-0" class="hole" cx="15" cy="50" r="9" onclick="handleGameHoleClick(0)"/>
+          <text x="12" y="32" font-size="10" fill="#2C3E50">0 (背)</text>
+          <circle id="g-hole-1" class="hole" cx="50" cy="50" r="9" onclick="handleGameHoleClick(1)"/>
+          <circle id="g-hole-2" class="hole" cx="50" cy="85" r="9" onclick="handleGameHoleClick(2)"/>
+          <circle id="g-hole-3" class="hole" cx="50" cy="120" r="9" onclick="handleGameHoleClick(3)"/>
+          <circle id="g-hole-4" class="hole" cx="50" cy="160" r="9" onclick="handleGameHoleClick(4)"/>
+          <circle id="g-hole-5" class="hole" cx="50" cy="195" r="9" onclick="handleGameHoleClick(5)"/>
+          <circle id="g-hole-6" class="hole" cx="50" cy="235" r="8" onclick="handleGameHoleClick(6)"/>
+          <circle id="g-hole-7" class="hole" cx="50" cy="275" r="8" onclick="handleGameHoleClick(7)"/>
+        </svg>
+      </div>
+
+      <!-- 右側答題操作區 -->
+      <div id="interaction-area" style="max-width: 320px; flex: 1;">
+        <!-- 題型 A：多選一按鈕 -->
+        <div id="type-a-options" class="hidden"></div>
+
+        <!-- 題型 B：反向測試（提交按鈕） -->
+        <div id="type-b-controls" class="hidden">
+          <p class="tip-box" style="font-size: 16px;">👉 請在左邊笛子上按出正確指法：<br>(點擊笛孔可切換按滿/半孔/放開)</p>
+          <button class="btn btn-submit" onclick="submitFingeringAnswer()">提交答案 🚀</button>
+        </div>
+
+        <div id="feedback-msg" class="feedback-msg"></div>
+      </div>
+    </div>
+
+    <br>
+    <button class="btn" style="background:#7F8C8D; margin-top:20px;" onclick="backToMenu()">放棄並返回</button>
+  </div>
+</div>
+
+<script>
+  // 音名數據資料庫 (0:背, 1-7:正面孔)[cite: 1]
+  // 0 = 放開, 1 = 按滿, 0.5 = 半孔
+  const NOTES_DATA = {
+    3: [
+      { name: "B",  freq: 493.88, holes: [1, 1, 0, 0, 0, 0, 0, 0] },
+      { name: "A",  freq: 440.00, holes: [1, 1, 1, 0, 0, 0, 0, 0] },
+      { name: "G",  freq: 392.00, holes: [1, 1, 1, 1, 0, 0, 0, 0] },
+      { name: "C'", freq: 523.25, holes: [1, 0, 1, 0, 0, 0, 0, 0] },
+      { name: "D'", freq: 587.33, holes: [0, 0, 1, 0, 0, 0, 0, 0] }
+    ],
+    4: [
+      { name: "D",  freq: 293.66, holes: [1, 1, 1, 1, 1, 1, 1, 0] },
+      { name: "E",  freq: 329.63, holes: [1, 1, 1, 1, 1, 1, 0, 0] },
+      { name: "E'", freq: 659.25, holes: [0.5, 1, 1, 1, 1, 1, 0, 0] },
+      { name: "F#", freq: 369.99, holes: [1, 1, 1, 1, 0, 1, 1, 0] }
+    ],
+    5: [
+      { name: "C",  freq: 261.63, holes: [1, 1, 1, 1, 1, 1, 1, 1] },
+      { name: "F",  freq: 349.23, holes: [1, 1, 1, 1, 0, 1, 1, 1] }
+    ],
+    6: [
+      { name: "Bb", freq: 466.16, holes: [1, 1, 0, 1, 1, 0, 0, 0] },
+      { name: "C#", freq: 277.18, holes: [1, 1, 1, 1, 1, 1, 0.5, 0] },
+      { name: "G'", freq: 783.99, holes: [0.5, 1, 1, 1, 0, 0, 0, 0] },
+      { name: "F'", freq: 698.46, holes: [0.5, 1, 1, 1, 0, 1, 0, 0] },
+      { name: "A'", freq: 880.00, holes: [0.5, 1, 1, 0, 0, 0, 0, 0] },
+      { name: "F#'",freq: 739.99, holes: [0.5, 1, 1, 1, 0, 1, 0, 0] },
+      { name: "G#", freq: 415.30, holes: [1, 1, 1, 0, 1, 1, 0.5, 0] }
+    ]
+  };
+
+  // 全域變數
+  let currentPracticeHoles = [0, 0, 0, 0, 0, 0, 0, 0];
+  let currentGameUserHoles = [0, 0, 0, 0, 0, 0, 0, 0];
+  let currentPool = [];
+  let currentQuestion = null;
+  let currentType = 1; // 1: 睇圖猜音名, 2: 睇音名按笛孔
+  let score = 0;
+  let timeLeft = 60;
+  let timerId = null;
+  let audioCtx = null;
+
+  // 初始化 Web Audio API 發聲器
+  function playSynthSound(freq) {
+    if (!freq) return;
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle'; // 類似木管樂器的柔和音色
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      
+      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.6);
+    } catch (e) {
+      console.log("Audio not supported or blocked");
+    }
+  }
+
+  // 更新 SVG 笛孔顯示狀態
+  function renderRecorderSVG(prefix, holesArray) {
+    holesArray.forEach((status, idx) => {
+      const el = document.getElementById(`${prefix}-hole-${idx}`);
+      if (!el) return;
+      el.classList.remove('filled', 'half', 'error');
+      if (status === 1) el.classList.add('filled');
+      else if (status === 0.5) el.classList.add('half');
+    });
+  }
+
+  // --- 練習模式 ---
+  function startPractice(grade) {
+    document.getElementById('menu-screen').classList.add('hidden');
+    document.getElementById('practice-screen').classList.remove('hidden');
+    document.getElementById('practice-title').innerText = `${grade} 年級指法練習`;
+
+    const notesList = NOTES_DATA[grade];
+    const container = document.getElementById('practice-notes-list');
+    container.innerHTML = '';
+
+    notesList.forEach(note => {
+      const btn = document.createElement('button');
+      btn.className = 'btn';
+      btn.innerText = note.name;
+      btn.onclick = () => {
+        currentPracticeHoles = [...note.holes];
+        renderRecorderSVG('p', currentPracticeHoles);
+        playSynthSound(note.freq);
+      };
+      container.appendChild(btn);
+    });
+
+    // 預設重置笛孔
+    currentPracticeHoles = [0, 0, 0, 0, 0, 0, 0, 0];
+    renderRecorderSVG('p', currentPracticeHoles);
+  }
+
+  function toggleHole(idx, isPractice = false) {
+    let targetArr = isPractice ? currentPracticeHoles : currentGameUserHoles;
+    let prefix = isPractice ? 'p' : 'g';
+
+    // 切換邏輯：0(開) -> 1(按滿) -> (若為0,6,7號孔則可進入 0.5半孔) -> 0
+    if (targetArr[idx] === 0) {
+      targetArr[idx] = 1;
+    } else if (targetArr[idx] === 1 && [0, 6, 7].includes(idx)) {
+      targetArr[idx] = 0.5;
+    } else {
+      targetArr[idx] = 0;
+    }
+
+    renderRecorderSVG(prefix, targetArr);
+
+    // 練習模式下：如果按出的指法恰好符合資料庫某個音，發聲提示
+    if (isPractice) {
+      for (let g in NOTES_DATA) {
+        let match = NOTES_DATA[g].find(n => n.holes.every((val, i) => val === targetArr[i]));
+        if (match) {
+          playSynthSound(match.freq);
+          break;
         }
-        
-        // 檢查音頻是否成功加載
-        audio.addEventListener('loadeddata', function() {
-            showStatus('✅ 音頻加載成功！點擊播放按鈕開始', 'success');
-            updateTimeDisplay();
-        });
-        
-        audio.addEventListener('error', function(e) {
-            console.error('音頻錯誤:', e);
-            showStatus('❌ 無法加載音頻檔案，請確認 triangle.mp3 已上傳', 'error');
-        });
-        
-        // 播放功能
-        playBtn.addEventListener('click', function() {
-            audio.play().then(() => {
-                showStatus('▶️ 正在播放...', 'success');
-            }).catch(error => {
-                showStatus('❌ 播放失敗：' + error.message, 'error');
-            });
-        });
-        
-        // 暫停功能
-        pauseBtn.addEventListener('click', function() {
-            audio.pause();
-            showStatus('⏸️ 已暫停', 'info');
-        });
-        
-        // 停止功能
-        stopBtn.addEventListener('click', function() {
-            audio.pause();
-            audio.currentTime = 0;
-            showStatus('⏹️ 已停止', 'info');
-        });
-        
-        // 音量控制
-        volumeSlider.addEventListener('input', function() {
-            const volume = this.value;
-            audio.volume = volume;
-            volumeValue.textContent = Math.round(volume * 100) + '%';
-        });
-        
-        // 時間格式化
-        function formatTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins}:${secs.toString().padStart(2, '0')}`;
-        }
-        
-        // 更新時間顯示
-        function updateTimeDisplay() {
-            currentTimeEl.textContent = formatTime(audio.currentTime);
-            if (audio.duration) {
-                totalTimeEl.textContent = formatTime(audio.duration);
-            }
-        }
-        
-        // 監聽時間更新
-        audio.addEventListener('timeupdate', updateTimeDisplay);
-        
-        // 監聽音頻加載完成
-        audio.addEventListener('loadedmetadata', function() {
-            totalTimeEl.textContent = formatTime(audio.duration);
-        });
-        
-        // 檔案上傳功能
-        fileUpload.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            // 檢查是否為音頻檔案
-            if (!file.type.startsWith('audio/')) {
-                showStatus('❌ 請選擇音頻檔案 (MP3, WAV, OGG 等)', 'error');
-                return;
-            }
-            
-            // 顯示上傳狀態
-            showStatus('⏳ 正在加載檔案：' + file.name, 'info');
-            
-            // 創建臨時URL
-            const url = URL.createObjectURL(file);
-            
-            // 更新audio元素
-            audio.src = url;
-            audio.load();
-            
-            // 更新標題
-            document.querySelector('h1').textContent = file.name + ' 播放器';
-            
-            // 播放新檔案
-            setTimeout(() => {
-                audio.play().catch(e => {
-                    showStatus('✅ 檔案加載完成！點擊播放按鈕開始', 'success');
-                });
-            }, 500);
-        });
-        
-        // 初始化音量顯示
-        volumeValue.textContent = Math.round(audio.volume * 100) + '%';
-        
-        // 自動嘗試播放（可能會被瀏覽器阻止）
-        window.addEventListener('click', function initAudio() {
-            // 嘗試自動播放一次
-            audio.play().then(() => {
-                audio.pause();
-                audio.currentTime = 0;
-            }).catch(() => {
-                // 被阻止是正常的
-                console.log('需要用戶交互才能自動播放');
-            });
-            
-            // 移除監聽器，只執行一次
-            window.removeEventListener('click', initAudio);
-        });
-        
-        // 頁面加載完成顯示狀態
-        window.addEventListener('load', function() {
-            showStatus('🔍 正在檢查音頻檔案...', 'info');
-            
-            // 檢查音頻是否已加載
-            if (audio.readyState >= 2) {
-                showStatus('✅ 音頻已準備好', 'success');
-            }
-        });
-    </script>
+      }
+    }
+  }
+
+  // --- 挑戰關卡模式 ---
+  function startLevel(lvl) {
+    currentPool = [];
+    for (let i = 3; i <= lvl + 2; i++) {
+      if (NOTES_DATA[i]) currentPool.push(...NOTES_DATA[i]);
+    }
+
+    score = 0;
+    timeLeft = 60;
+    document.getElementById('current-level').innerText = lvl;
+    document.getElementById('score').innerText = score;
+    document.getElementById('timer').innerText = timeLeft;
+
+    document.getElementById('menu-screen').classList.add('hidden');
+    document.getElementById('game-screen').classList.remove('hidden');
+
+    clearInterval(timerId);
+    timerId = setInterval(() => {
+      timeLeft--;
+      document.getElementById('timer').innerText = timeLeft;
+      if (timeLeft <= 0) {
+        clearInterval(timerId);
+        alert(`⏰ 時間到！你的最終得分是：${score} 分`);
+        backToMenu();
+      }
+    }, 1000);
+
+    nextQuestion();
+  }
+
+  function nextQuestion() {
+    document.getElementById('feedback-msg').innerText = '';
+    
+    // 隨機選題
+    currentQuestion = currentPool[Math.floor(Math.random() * currentPool.length)];
+    // 隨機題型：1 = 看圖猜音名 (60%), 2 = 看音名按笛孔 (40%)
+    currentType = Math.random() < 0.6 ? 1 : 2;
+
+    const promptEl = document.getElementById('question-prompt');
+    const typeAOpt = document.getElementById('type-a-options');
+    const typeBCtl = document.getElementById('type-b-controls');
+
+    if (currentType === 1) {
+      // 題型 1：睇圖猜音名
+      promptEl.innerText = "❓ 請根據指法，選擇正確的音名：";
+      typeAOpt.classList.remove('hidden');
+      typeBCtl.classList.add('hidden');
+
+      // 設定笛孔為唯讀並顯示題目指法
+      setGameHolesInteractive(false);
+      renderRecorderSVG('g', currentQuestion.holes);
+
+      // 生成選項按鈕
+      typeAOpt.innerHTML = '';
+      let options = [...currentPool].sort(() => 0.5 - Math.random()).slice(0, 4);
+      if (!options.some(o => o.name === currentQuestion.name)) options[0] = currentQuestion;
+      options.sort(() => 0.5 - Math.random());
+
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-option';
+        btn.innerText = opt.name;
+        btn.onclick = () => checkTypeAAnswer(opt.name);
+        typeAOpt.appendChild(btn);
+      });
+
+    } else {
+      // 題型 2：睇音名按笛孔 (反向測試)
+      promptEl.innerHTML = `🎯 請按出音名 <span style="color:var(--primary); font-size: 32px;">[ ${currentQuestion.name} ]</span> 的指法：`;
+      typeAOpt.classList.add('hidden');
+      typeBCtl.classList.remove('hidden');
+
+      // 開放笛孔點擊互動，並重置玩家指法
+      setGameHolesInteractive(true);
+      currentGameUserHoles = [0, 0, 0, 0, 0, 0, 0, 0];
+      renderRecorderSVG('g', currentGameUserHoles);
+    }
+  }
+
+  function setGameHolesInteractive(interactive) {
+    for (let i = 0; i <= 7; i++) {
+      const el = document.getElementById(`g-hole-${i}`);
+      if (interactive) el.classList.remove('hole-readonly');
+      else el.classList.add('hole-readonly');
+    }
+  }
+
+  function handleGameHoleClick(idx) {
+    if (currentType === 2) {
+      toggleHole(idx, false);
+    }
+  }
+
+  // 檢查題型 1 答案
+  function checkTypeAAnswer(selectedName) {
+    const feedback = document.getElementById('feedback-msg');
+    if (selectedName === currentQuestion.name) {
+      score += 10;
+      playSynthSound(currentQuestion.freq);
+      feedback.className = "feedback-msg text-correct";
+      feedback.innerText = "🎉 答對了！+10 分";
+      document.getElementById('score').innerText = score;
+      setTimeout(nextQuestion, 1000);
+    } else {
+      timeLeft = Math.max(0, timeLeft - 3);
+      feedback.className = "feedback-msg text-wrong";
+      feedback.innerText = `❌ 答錯囉！這是 ${currentQuestion.name}（扣 3 秒）`;
+      document.getElementById('timer').innerText = timeLeft;
+      setTimeout(nextQuestion, 1500);
+    }
+  }
+
+  // 檢查題型 2 答案（按笛孔對錯）
+  function submitFingeringAnswer() {
+    const feedback = document.getElementById('feedback-msg');
+    const targetHoles = currentQuestion.holes;
+    let isCorrect = true;
+
+    // 檢查每一個笛孔
+    targetHoles.forEach((status, idx) => {
+      const el = document.getElementById(`g-hole-${idx}`);
+      if (currentGameUserHoles[idx] !== status) {
+        isCorrect = false;
+        el.classList.add('error'); // 高亮按錯的笛孔
+      }
+    });
+
+    if (isCorrect) {
+      score += 20; // 動手按題目給予雙倍高分！
+      playSynthSound(currentQuestion.freq);
+      feedback.className = "feedback-msg text-correct";
+      feedback.innerText = "🎉 指法完全正確！+20 分";
+      document.getElementById('score').innerText = score;
+      setTimeout(nextQuestion, 1000);
+    } else {
+      timeLeft = Math.max(0, timeLeft - 3);
+      feedback.className = "feedback-msg text-wrong";
+      feedback.innerText = `❌ 指法有誤（紅框處按錯囉，扣 3 秒）`;
+      document.getElementById('timer').innerText = timeLeft;
+      setTimeout(() => {
+        // 顯示正確解答讓學生學習
+        renderRecorderSVG('g', targetHoles);
+        setTimeout(nextQuestion, 2000);
+      }, 1000);
+    }
+  }
+
+  function backToMenu() {
+    clearInterval(timerId);
+    document.getElementById('game-screen').classList.add('hidden');
+    document.getElementById('practice-screen').classList.add('hidden');
+    document.getElementById('menu-screen').classList.remove('hidden');
+  }
+</script>
 </body>
 </html>
